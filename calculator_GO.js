@@ -1,26 +1,23 @@
 package main
-
+ 
 import (
     "fmt"
-    "strings" // добавлен импорт пакета strings
+    "strconv"
+    "strings" 
 )
-
-// Карта для преобразования римских чисел в арабские
+ // Карта для преобразования римских чисел в арабские
 var romanToArabic = map[string]int{
     "I": 1, "II": 2, "III": 3, "IV": 4, "V": 5, "VI": 6, "VII": 7, "VIII": 8, "IX": 9, "X": 10,
 }
-
-// Карта для преобразования арабских чисел в римские
+ // Карта для преобразования арабских чисел в римские
 var arabicToRoman = map[int]string{
     1: "I", 2: "II", 3: "III", 4: "IV", 5: "V", 6: "VI", 7: "VII", 8: "VIII", 9: "IX", 10: "X",
-    20: "XX", 30: "XXX", 40: "XL", 50: "L", 60: "LX", 70: "LXX", 80: "LXXX", 90: "XC", 100: "C",
 }
-
-// Функция для преобразования римских чисел в арабские
-func romanToArabicConverter(roman string) (int, error) {
+ // Функция для преобразования римских чисел в арабские
+func romanToArabicConverter(roman string) int {
     result := 0
-    for i := 0; i < len(roman); i++ {
-        current := romanToArabic[string(roman[i])]
+    for i := 0;  i < len(roman); i++ { 
+        current  := romanToArabic[string(roman[i])] //текущий = current
         next := 0
         if i+1 < len(roman) {
             next = romanToArabic[string(roman[i+1])]
@@ -32,28 +29,12 @@ func romanToArabicConverter(roman string) (int, error) {
             result += current
         }
     }
-    return result, nil
+    return result
 }
-
+ 
 // Функция для преобразования арабских чисел в римские
 func arabicToRomanConverter(arabic int) string {
     var roman strings.Builder
-    for arabic >= 100 {
-        roman.WriteString("C")
-        arabic -= 100
-    }
-    if arabic >= 90 {
-        roman.WriteString("XC")
-        arabic -= 90
-    }
-    if arabic >= 50 {
-        roman.WriteString("L")
-        arabic -= 50
-    }
-    if arabic >= 40 {
-        roman.WriteString("XL")
-        arabic -= 40
-    }
     for arabic >= 10 {
         roman.WriteString("X")
         arabic -= 10
@@ -76,22 +57,30 @@ func arabicToRomanConverter(arabic int) string {
     }
     return roman.String()
 }
-
+ func examination(num string) float64 {
+    _, ok := romanToArabic[num]
+    if ok {
+        return float64(romanToArabicConverter(num))
+    } else {
+        i, err := strconv.Atoi(num)
+        if err != nil {
+            panic(err)
+        }
+        return float64(i)
+ 
+    }
+}
+ 
 func main() {
-    var num1, num2 float64
-    var operation string
-
-    fmt.Print("Введите первое число: ")
-    fmt.Scanln(&num1)
-
-    fmt.Print("Введите операцию (+, -, *, /): ")
-    fmt.Scanln(&operation)
-
-    fmt.Print("Введите второе число: ")
-    fmt.Scanln(&num2)
-
+    var inputNum1, inputNum2 string
     var result float64
-
+    var operation string
+ 
+    fmt.Print("Введите пример")
+    fmt.Scanf("%s %c %s", &inputNum1, &operation, &inputNum2)
+    num1 := examination(inputNum1)
+    num2 := examination(inputNum2)
+    
     switch operation {
     case "+":
         result = num1 + num2
@@ -110,6 +99,5 @@ func main() {
         fmt.Println("Ошибка: неверная операция")
         return
     }
-
-    fmt.Printf("Результат: %.2f %s %.2f = %.2f", num1, operation, num2, result)
+    fmt.Printf("Результат: %s %c %s = %.2f\n", inputNum1, operation, inputNum2, result)
 }
