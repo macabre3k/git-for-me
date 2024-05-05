@@ -31,8 +31,7 @@ func romanToArabicConverter(roman string) int {
     }
     return result
 }
- 
-// Функция для преобразования арабских чисел в римские
+ // Функция для преобразования арабских чисел в римские
 func arabicToRomanConverter(arabic int) string {
     var roman strings.Builder
     for arabic >= 10 {
