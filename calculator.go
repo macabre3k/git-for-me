@@ -69,14 +69,13 @@ func arabicToRomanConverter(arabic int) string {
  
     }
 }
- 
-func main() {
+ func main() {
     var inputNum1, inputNum2 string
     var result float64
     var operation string
  
-    fmt.Print("Введите пример")
-    fmt.Scanf("%s %c %s", &inputNum1, &operation, &inputNum2)
+    fmt.Print("Введите пример:")
+    fmt.Scanf("%s %s %s", &inputNum1, &operation, &inputNum2)
     num1 := examination(inputNum1)
     num2 := examination(inputNum2)
     
@@ -98,5 +97,6 @@ func main() {
         fmt.Println("Ошибка: неверная операция")
         return
     }
-    fmt.Printf("Результат: %s %c %s = %.2f\n", inputNum1, operation, inputNum2, result)
+ 
+      fmt.Printf("Результат: %s %s %s = %.2f\n", inputNum1, operation, inputNum2, result)
 }
