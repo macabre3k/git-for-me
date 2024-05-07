@@ -1,106 +1,132 @@
 package main
 
 import (
- "fmt"
- "strconv"
- "strings"
+	"bufio"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
 )
-
-var romanToArabic = map[string]int{
- "I": 1, "II": 2, "III": 3, "IV": 4, "V": 5, "VI": 6, "VII": 7, "VIII": 8, "IX": 9, "X": 10,
+type Roman struct {
+	numeral string
+	value   int
 }
 
-var arabicToRoman = map[int]string{
- 1: "I", 2: "II", 3: "III", 4: "IV", 5: "V", 6: "VI", 7: "VII", 8: "VIII", 9: "IX", 10: "X",
+var RomanNumeral = []Roman{
+	{"XC", 90}, {"C", 100}, {"XL", 40}, {"L", 50},
+	{"IX", 9}, {"X", 10}, {"IV", 4}, {"V", 5},
+	{"I", 1},
 }
 
-func romanToArabicConverter(roman string) int {
- result := 0
- for i := 0; i < len(roman); i++ {
-  current := romanToArabic[string(roman[i])]
-  next := 0
-  if i+1 < len(roman) {
-   next = romanToArabic[string(roman[i+1])]
-  }
-  if next > current {
-   result += next - current
-   i++
-  } else {
-   result += current
-  }
- }
- return result
+var RomanValue = []Roman{
+	{"C", 100}, {"XC", 90}, {"L", 50}, {"XL", 40},
+	{"X", 10}, {"IX", 9}, {"V", 5}, {"IV", 4},
+	{"I", 1},
+}
+func RomanNumberToInt(romanNumber string) (result int) {
+	count := len(romanNumber)
+	runes := []rune(romanNumber)
+
+	i := 0
+	for i < count {
+		substring := string(runes[i:count])
+
+		var matching Roman
+
+		for _, glyph := range RomanNumeral {
+			if strings.HasPrefix(substring, glyph.numeral) {
+				matching = glyph
+				break
+			}
+		}
+		result += matching.value
+		i += len(matching.numeral)
+	}
+	return result
+}
+func IntToRomanNumber(number int) (result string) {
+	for _, romanGlyph := range RomanValue {
+		for number >= romanGlyph.value {
+			result += romanGlyph.numeral
+			number -= romanGlyph.value
+		}
+	}
+	return result
+}
+func sum(a int, b int) int {
+	return a + b
 }
 
-func arabicToRomanConverter(arabic int) string {
- var roman strings.Builder
- for arabic >= 10 {
-  roman.WriteString("X")
-  arabic -= 10
- }
- if arabic >= 9 {
-  roman.WriteString("IX")
-  arabic -= 9
- }
- if arabic >= 5 {
-  roman.WriteString("V")
-  arabic -= 5
- }
- if arabic >= 4 {
-  roman.WriteString("IV")
-  arabic -= 4
- }
- for arabic >= 1 {
-  roman.WriteString("I")
-  arabic -= 1
- }
- return roman.String()
+func sub(a int, b int) int {
+	return a - b
 }
 
-func examination(num string) (float64, bool) {
- if _, ok := romanToArabic[num]; ok {
-  return float64(romanToArabicConverter(num)), true
- } else {
-  if arabic, err := strconv.Atoi(num); err == nil {
-   return float64(arabic), false
-  }
- }
- return 0, false
+func multi(a int, b int) int {
+	return a * b
+}
+
+func divi(a int, b int) int {
+	return a / b
 }
 
 func main() {
- var inputNum1, inputNum2 string
- var result float64
- var operation string
+	var result int
+	var isRoman bool
 
- fmt.Print("Введите пример: ")
- fmt.Scanf("%s %s %s", &inputNum1, &operation, &inputNum2)
- num1, isRoman1 := examination(inputNum1)
- num2, isRoman2 := examination(inputNum2)
+	fmt.Println("Введите выражение")
 
- if isRoman1 != isRoman2 {
-  fmt.Println("Ошибка: числа должны быть либо оба римские, либо оба арабские")
-  return
- }
+	reader := bufio.NewReader(os.Stdin)
+	text, _ := reader.ReadString('\n')
+	text = strings.TrimSpace(text)
+	elemets := strings.Fields(text) 
 
- switch operation {
- case "+":
-  result = num1 + num2
- case "-":
-  result = num1 - num2
- case "*":
-  result = num1 * num2
- case "/":
-  if num2 != 0 {
-   result = num1 / num2
-  } else {
-   fmt.Println("Ошибка: деление на ноль невозможно")
-   return
-  }
- default:
-  fmt.Println("Ошибка: неверная операция")
-  return
- }
+	if len(elemets) > 3 {
+		fmt.Println("Ошибка операции")
+		return
+	}
+	if len(elemets) < 3 {
+		fmt.Println("Ошибка операции")
+		return
+	}
 
- fmt.Printf("Результат: %s %s %s = %.2f\n", inputNum1, operation, inputNum2, result)
-}   
+	num1, er1 := strconv.Atoi(elemets[0])
+	num2, er2 := strconv.Atoi(elemets[2])
+
+	if (er1 == nil && er2 != nil) || (er1 != nil && er2 == nil) {
+		fmt.Println("Вывод ошибки, числа либо римские либо арабские")
+		return
+	}
+	if er1 != nil && er2 != nil {
+		isRoman = true
+
+		num1 = RomanNumberToInt(elemets[0])
+		num2 = RomanNumberToInt(elemets[2])
+	}
+	if (num1 > 10 || 1 > num1) || (num2 > 10 || 1 > num2) {
+		fmt.Println("Числа должны быть от 1 до 10 включительно")
+		return
+	}
+	switch elemets[1] {
+	case "+":
+		result = sum(num1, num2)
+	case "-":
+		result = sub(num1, num2)
+	case "/":
+		result = divi(num1, num2)
+	case "*":
+		result = multi(num1, num2)
+	default:
+		println("Ошибка")
+		return
+	}
+if isRoman {
+		if result < 1 {
+			println("Ошибка")
+			return
+		}
+		println(IntToRomanNumber(result))
+
+	} else {
+		println(result)
+	}
+}
