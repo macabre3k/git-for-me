@@ -11,11 +11,7 @@ import (
 
 func main() {
 
-  str1, operator, str2, errInput := input()
-
-  if errInput != nil {
-    panic(errInput)
-  }
+  str1, operator, str2 := input()
 
   detectstr1, err1 := isSting(str1)
 
@@ -121,17 +117,36 @@ func mult(d1, d2 bool, s1, s2 string) {
   printResult(result)
 }
 
-func input() (string, string, string, error) {
-  reader := bufio.NewReader(os.Stdin) //новый сканер
-  Polzovatel, _ := reader.ReadString('\n')
+func input() (string, string, string) {
 
-  slice := strings.Fields(Polzovatel)
+  reader := bufio.NewReader(os.Stdin)
+  s, _ := reader.ReadString('\n')
 
-  if len(slice) != 3 {
-    return "", "", "", errors.New("Неккоректный формат ввода")
+  result := make([]string, 3)
+  temp := ""
+
+  flag := false
+
+  counter := 0
+  for i := 0; i < len(s); i++ {
+
+    if s[i] == '"' {
+      flag = !flag
+    }
+
+    if s[i] == ' ' || s[i] == '\n' {
+      if !flag || s[i] == '\n' {
+        result[counter] = temp
+        temp = ""
+        counter++
+        continue
+      }
+    }
+
+    temp += string(s[i])
   }
 
-  return slice[0], slice[1], slice[2], nil
+  return result[0], result[1], result[2]
 }
 
 func isSting(a string) (bool, error) {
@@ -155,3 +170,9 @@ func isSting(a string) (bool, error) {
 
   return false, nil
 }
+
+  
+  
+
+ 
+   
