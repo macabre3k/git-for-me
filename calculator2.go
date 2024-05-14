@@ -78,14 +78,12 @@ func sub(d1, d2 bool, s1, s2 string) {
   startIndex := strings.Index(s1, s2)
 
   if startIndex == -1 {
-    fmt.Print(s1)
+    printResult(s1)
+  } else {
+    endIndex := startIndex + len(s2)
+    result := s1[:startIndex] + s1[endIndex:]
+    printResult(result)
   }
-
-  endIndex := startIndex + len(s2)
-
-  result := s1[:startIndex] + s1[endIndex:]
-
-  printResult(result)
 }
 
 func sum(d1, d2 bool, s1, s2 string) {
@@ -170,7 +168,6 @@ func isSting(a string) (bool, error) {
 
   return false, nil
 }
-
   
   
 
